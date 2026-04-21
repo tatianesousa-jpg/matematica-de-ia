@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>IA Escola Inteligente</title>
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#00ffcc;
+  font-family:Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.box{
+  width:520px;
+  background:#111;
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 0 25px #00ffcc;
+}
+
+#chat{
+  height:320px;
+  overflow:auto;
+  background:#fff;
+  color:#000;
+  padding:10px;
+  border-radius:5px;
+}
+
+input{
+  width:70%;
+  padding:10px;
+}
+
+button{
+  padding:10px;
+  margin-top:5px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h3>🧠 IA Escola Inteligente</h3>
+
+<div id="chat"></div>
+
+<input id="pergunta" placeholder="Digite ou fale...">
+
+<br>
+
+<button onclick="responder()">Enviar</button>
+<button onclick="microfone()">🎤</button>
+<button onclick="falarUltima()">🔊</button>
+
+</div>
+
+<script>
+
+let ultimaResposta = "";
+
+/* 🎤 MICROFONE */
+function microfone(){
+  let rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  rec.lang = "pt-BR";
+
+  rec.onresult = e=>{
+    document.getElementById("pergunta").value =
+    e.results[0][0].transcript;
+  };
+
+  rec.start();
+}
+
+/* 🔊 VOZ */
+function falar(texto){
+  let msg = new SpeechSynthesisUtterance(texto);
+  msg.lang = "pt-BR";
+  speechSynthesis.speak(msg);
+}
+
+function falarUltima(){
+  if(ultimaResposta) falar(ultimaResposta);
+}
+
+/* 🧠 INTERPRETAÇÃO AVANÇADA */
+function interpretar(p){
+
+  p = p.toLowerCase();
+
+/* saudação */
+if(p.includes("oi") || p.includes("bom dia") || p.includes("olá")){
+  return "Olá! Vamos estudar matemática juntos 🙂";
+}
+
+/* conceitos */
+if(p.includes("primo")){
+  return "Número primo só divide por 1 e por ele mesmo.";
+}
+
+if(p.includes("par")){
+  return "Número par é divisível por 2.";
+}
+
+if(p.includes("módulo") || p.includes("modulo")){
+  return "Módulo é a distância até o zero. Ex: |-10| = 10";
+}
+
+/* banco de moedas */
+if(p.includes("moeda") || p.includes("dólar") || p.includes("euro")){
+  return `
+💱 Moedas:
+USD = dólar americano
+EUR = euro
+GBP = libra
+JPY = iene
+ARS = peso argentino
+`;
+}
+
+/* matemática natural */
+if(p.includes("dobro")){
+  let n = p.match(/\d+/);
+  if(n) return "Dobro de " + n[0] + " é " + (n[0]*2);
+}
+
+if(p.includes("triplo")){
+  let n = p.match(/\d+/);
+  if(n) return "Triplo de " + n[0] + " é " + (n[0]*3);
+}
+
+/* conta simples */
+if(p.match(/\d/)){
+  try{
+    let r = p.replace("x","*");
+    return "Resultado: " + eval(r);
+  }catch{
+    return "Não consegui calcular isso.";
+  }
+}
+
+/* fallback */
+return "Posso te explicar isso se você reformular a pergunta.";
+}
+
+/* 🤖 IA */
+function responder(){
+
+  let p = document.getElementById("pergunta").value;
+  let chat = document.getElementById("chat");
+
+  if(!p) return;
+
+  let r = interpretar(p);
+
+  ultimaResposta = r;
+
+  chat.innerHTML += "<b>Você:</b> " + p + "<br>";
+  chat.innerHTML += "<b>Professor:</b> " + r + "<br><br>";
+
+  document.getElementById("pergunta").value="";
+}
+
+</script>
+
+</body>
+</html>
